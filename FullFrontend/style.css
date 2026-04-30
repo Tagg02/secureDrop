@@ -467,6 +467,13 @@ body.upload-page {
     background-color: var(--focus-color);
 }
 
+.upload-rules {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
 .upload-button, .cancel-button {
     margin-top: 20px;
     padding: 10px 25px;
