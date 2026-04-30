@@ -5,11 +5,11 @@ const mysql = require("mysql2/promise");
 let pool;
 
 try {
-  if (!process.env.MYSQL_URL) {
-    throw new Error("MYSQL_URL not set in .env");
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL not set in .env");
   }
 
-  pool = mysql.createPool(process.env.MYSQL_URL);
+  pool = mysql.createPool(process.env.DATABASE_URL);
 
   console.log("✅ MySQL pool created successfully");
 } catch (err) {

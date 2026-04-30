@@ -4,13 +4,11 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
-const { connectDB } = require("./config/db");
+require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const adminRoutes = require("./routes/admin");
-
-connectDB();
 
 const app = express();
 
