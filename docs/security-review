@@ -1,1 +1,19 @@
+I carried out an analysis of the backend code, using a combination of manual code review and automated tools. Searches were also performed for any unsafe functions
+such as eval(), exec() and child_process, as well as hardcoded secrets or suspicious net activity. I also assessed aany dependency vulnerabilities by using npm
+audit.
+
+I was unable to find any use of eval(), exec() or child_process in the source code, which indicated that there was no dynamic code execution or
+system-level command execution. I also carried out a search for HTTP/HTTPS endpoints, which only identified local development addresses (localhost, 127.0.0.1)
+and a GitHub Pages domain (https://tagg02.github.io). These are expected for frontend-backend communication, and no suspicious external connections were found.
+
+There were also references to AES_SECRET, JWT_SECRET, and AWS_SECRET_KEY, but these were accessed via process.env) rather than being hardcoded.
+The .env file wasn’t present in the repository and is included in .gitignore so that sensitive data isn’t exposed.
+
+npm audit was able to identify six vulnerabilities, with three being high and the other three being moderate threats.
+These affected packages such as multer, express-rate-limit, and path-to-regexp. These vulnerabilities may introduce risks such as denial of service or rate
+limiting bypass, but do not show any signs of malicious intent.
+
+The backend does include security packages such as helmet, bcryptjs, and jsonwebtoken, which support secure development practices.
+
+In summary, there was no evidence of malware or any intentionally harmful behaviour.
 
