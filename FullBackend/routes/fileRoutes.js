@@ -5,11 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const authenticate = require("../middleware/authMiddleware");
 const File = require("../models/File");
-
-const { encrypt, decrypt } = require("../utils/crypto"); // AES-256 helpers
-
 const { encryptBuffer, decryptBuffer } = require("../crypto");
-
 
 const router = express.Router();
 
@@ -53,18 +49,11 @@ router.post("/upload", authenticate, (req, res, next) => {
     const s3Key = uuidv4() + ext;
     const encryptedBuffer = encryptBuffer(req.file.buffer);
 
-    // Encrypt file before upload
-    const encryptedBuffer = encrypt(req.file.buffer);
-
     await s3.send(new PutObjectCommand({
       Bucket: BUCKET,
       Key: s3Key,
       Body: encryptedBuffer,
-
-      ContentType: req.file.mimetype
-
       ContentType: "application/octet-stream"
-
     }));
 
     const file = await File.create({
@@ -109,17 +98,6 @@ router.get("/:id", authenticate, async (req, res) => {
       Key: file.StoredName
     }));
 
-
-    let chunks = [];
-    for await (let chunk of data.Body) {
-      chunks.push(chunk);
-    }
-    const decryptedBuffer = decrypt(Buffer.concat(chunks));
-
-    res.setHeader("Content-Disposition", `attachment; filename="${file.OrigName}"`);
-    res.setHeader("Content-Type", file.MimeType);
-    res.send(decryptedBuffer);
-
     const chunks = [];
     for await (const chunk of data.Body) chunks.push(chunk);
     const decrypted = decryptBuffer(Buffer.concat(chunks));
@@ -127,7 +105,6 @@ router.get("/:id", authenticate, async (req, res) => {
     res.setHeader("Content-Disposition", `attachment; filename="${file.OrigName}"`);
     res.setHeader("Content-Type", file.MimeType);
     res.send(decrypted);
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Download failed" });
